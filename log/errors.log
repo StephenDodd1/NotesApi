@@ -1,0 +1,6 @@
+{"level":"error","message":"ran into error on the /folders endpoint"}
+{"level":"error","message":"ran into error on the /folders endpoint"}
+{"level":"error","message":{"path":"/folders"}}
+{"level":"error","message":{"path":"/folders"}}
+{"level":"error","message":{"path":"/folders"}}
+{"level":"error","message":{"folderName":"winston","inactive":false}}
