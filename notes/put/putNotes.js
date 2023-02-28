@@ -1,32 +1,40 @@
 const express = require('express')
 const router = express.Router()
 const fs = require('fs')
-const logger = require('../../app')
+const logger = require('../../logger')
+const { getData, writeData } = require('../../common/commonFunctions')
+const { fileTypes } = require('../../common/constants')
 
-// get data function runs dynamically with the txtName parameter
-const getData = (txtName) => fs.promises.readFile(`./my${txtName}.txt`, 'utf-8', (err, data) => {
-	if(!err){
-		return data
-	} else console.log(err)
-})
-// write data file dynamically from any endpoint
-const writeData = (newDataString, txtName) => {
-	console.log('txtName: ', txtName)
-	return fs.promises.writeFile(`./my${txtName}.txt`, newDataString, (err) => {
-		if(err){
-			throw new Error(err)
-		}
-	})
-}
 
 router.put('/:noteId', async (req, res) => {
-    logger.info(req.params.noteId)
-    const dataString = await getData('Notes')
-    const dataJson = JSON.parse(dataString)
-    let filteredData = dataJson.notes.filter(note => note.id === req.params.noteId)[0]
-    filteredData = {...req.body, id: req.params.noteId}
-    writeData(JSON.stringify(dataJson), 'Notes').catch(err => logger.error('failed to write'))
-    res.send(dataJson)
+    try{
+        logger.info(req.params.noteId)
+        const dataString = getData(fileTypes.NOTES)
+        const dataJson = JSON.parse(dataString)
+        const filteredData = dataJson.notes.map(note => {
+            if(note.id === req.params.noteId){
+                return({...req.body, id: req.params.noteId})
+            } else{
+                return(note)
+            }
+        })
+        const newObj = {}
+        newObj['notes'] = filteredData
+        console.log('newObj', newObj, 'dataJson', dataJson)
+        writeData(JSON.stringify(newObj), fileTypes.NOTES).catch(err => logger.error('failed to write'))
+        res.send(newObj)
+    } catch(err) {
+        logger.error(err.message)
+        console.log(err.name)
+        if(err.name === 'SyntaxError'){
+            res.status(500).send("An internal error has occurred, we're working on it.")
+        } else if(err.name === 'TypeError'){
+            res.status(400).send("Your data is improperly formatted, please check it and try again")
+        } else {
+            res.status(500).send(err.message)
+        }
+    }
+
 })
 
 module.exports = router

@@ -1,1 +1,5 @@
-{"folders":[{"id":1,"name":"test 1","inactive":true},{"id":3,"name":"test 3","inactive":false},{"id":2,"name":"test 2","inactive":false},{"id":0,"name":"test 0","inactive":false},{"id":5,"name":"test 5","inactive":false},{"id":5},{"id":6},{"id":7},{"id":8},{"id":9}]}
+{"folders":[
+    {"id":1,"name":"test 1","inactive":true},
+    {"id":3,"name":"test 3","inactive":false},
+    {"id":2,"name":"test 2","inactive":false},
+    {"id":0,"name":"test 0","inactive":false},{"id":5,"name":"test 5","inactive":false},{"id":5},{"id":6},{"id":7},{"id":8},{"id":9}]}

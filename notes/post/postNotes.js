@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const { getData, writeData, createANewId } = require('../../common/commonFunctions')
+const { fileTypes } = require('../../common/constants')
 
 const getData = (txtName) => fs.promises.readFile(`./my${txtName}.txt`, 'utf-8', (err, data) => {
 	if(!err){
@@ -15,23 +17,10 @@ const writeData = (newDataString, txtName) => {
 	})
 }
 
-const createANewId = () => {
-	let id = 'N'
-	try {
-		while (id.length < 10) {
-			if(id.length % 2 === 0){
-				id += String.fromCharCode(97 + Math.floor(Math.random() * 26))
-			}
-			else id += Math.floor(Math.random()*13)
-		}
-	} catch(err){
-		console.log('error at createANewId: ', err.name, err.message)
-	}
-	return id
-}
+
 // create a new note
 router.post("/", async (req,res) =>{
-	const dataString = await getData('Notes')
+	const dataString = await getData(fileTypes.NOTES)
 	let dataJson
 	try {
 		dataJson = JSON.parse(dataString)

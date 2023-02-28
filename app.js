@@ -1,10 +1,10 @@
 const fs = require('fs')
 const express = require('express')
 const cors = require('cors')
+const morgan = require('morgan')
 const logger = require('./logger')
 const port = process.env.PORT || 3000
 
-const notesRouter = require('./notes/notes')
 const deleteNotesRouter = require('./notes/delete/deleteNotes')
 const putNotesRouter = require('./notes/put/putNotes')
 
@@ -14,25 +14,9 @@ const bodyParser = express.json()
 
 app.use(cors())
 app.use(bodyParser)
-/// enum
-const fileTypes = {folders: 'Folders', notes: 'Notes', users: 'Users'}
-
-
-// get data function runs dynamically with the txtName parameter
-const getData = (txtName) => fs.promises.readFile(`./my${txtName}.txt`, 'utf-8', (err, data) => {
-	if(!err){
-		return data
-	} else console.log(err)
-})
-// write data file dynamically from any endpoint
-const writeData = (newDataString, txtName) => {
-	console.log('txtName: ', txtName)
-	return fs.promises.writeFile(`./my${txtName}.txt`, newDataString, (err) => {
-		if(err){
-			throw new Error(err)
-		}
-	})
-}
+/// call our file requests.log w r a
+const requestLogFile = fs.createWriteStream('log/requests.log', {flags: 'a'})
+app.use(morgan('combined', {stream:requestLogFile}))
 
 const createANewId = () => {
 	let id = 'N'
@@ -57,7 +41,8 @@ app.get('/folders', async (req,res) => {
 		logger.info({path: req.path})
 		res.json(filteredData)
 	} catch(err) {
-		logger.error({path: req.path})
+		logger.error('There was an error getting the folders.')
+		res.status(500).send('error has occurred with getting folders')
 	}
 })
 
@@ -148,17 +133,9 @@ app.delete('/tabs/:noteId/:sessionId', async (req,res) =>{
 	res.send('test')
 })
 
-app.use('/notes', notesRouter)
 app.use('/notes', deleteNotesRouter)
 app.use('/notes', putNotesRouter)
-// app.get("/notes/:folderId", async (req, res) => {
-//     console.log('ran')
-// 	// call getData with name param dynamically
-// 	const dataString = await getData(fileTypes.notes)
-// 	const dataJson = JSON.parse(dataString) 
-// 	const filteredJson = dataJson.notes.filter(note => !note.inactive )
-// 	res.json(filteredJson)
-// })
+
 app.get('/*', (req,res) =>{
 	console.log(req.path)
 })
