@@ -1,1 +1,1 @@
-{"users":[{"id":"123","tabs":[{"id":0,"note_id":"xyz135","note_name":"Note of Notes"},{"id":1,"note_id":"xyz133","note_name":"Note 1"}]},{"id":"124","tabs":[{"id":0,"note_id":"xyz132","note_name":"Note 2"},{"id":1,"note_id":"xyz133","note_name":"Note 1"}]}]}
+{"users":[{"id":"N4c7a1g4i11","given_name":"JWT","surname":"USER","username":"jwtUser1","salt":"$2b$10$0aMhQKsevpHdZCO.PZUUr.","hash":"$2b$10$0aMhQKsevpHdZCO.PZUUr.nfhoJy13u.UZBilOu/a/qAYQZRIOmJq"}]}

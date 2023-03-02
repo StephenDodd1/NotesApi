@@ -7,6 +7,7 @@ const port = process.env.PORT || 3000
 
 const deleteNotesRouter = require('./notes/delete/deleteNotes')
 const putNotesRouter = require('./notes/put/putNotes')
+const authRouter = require('./auth/auth')
 
 const app = express()
 
@@ -18,20 +19,6 @@ app.use(bodyParser)
 const requestLogFile = fs.createWriteStream('log/requests.log', {flags: 'a'})
 app.use(morgan('combined', {stream:requestLogFile}))
 
-const createANewId = () => {
-	let id = 'N'
-	try {
-		while (id.length < 10) {
-			if(id.length % 2 === 0){
-				id += String.fromCharCode(97 + Math.floor(Math.random() * 26))
-			}
-			else id += Math.floor(Math.random()*13)
-		}
-	} catch(err){
-		console.log('error at createANewId: ', err.name, err.message)
-	}
-	return id
-}
 
 app.get('/folders', async (req,res) => {
 	try {
@@ -135,30 +122,11 @@ app.delete('/tabs/:noteId/:sessionId', async (req,res) =>{
 
 app.use('/notes', deleteNotesRouter)
 app.use('/notes', putNotesRouter)
-
+app.use('/auth', authRouter)
 app.get('/*', (req,res) =>{
 	console.log(req.path)
 })
 
 app.listen(port, () => console.log('listening on port ', port))
-
-// {"users":
-//     [    
-//         { 
-//             "id": "123",
-//             "tabs": [
-//                 {"id": 0, "note_id": "xyz132", "note_name": "Note 2"}, 
-//                 {"id": 1, "note_id": "xyz133", "note_name": "Note 1"}
-//             ]
-//         },
-//         { 
-//             "id": "124",
-//             "tabs": [
-//                 {"id": 0, "note_id": "xyz132", "note_name": "Note 2"}, 
-//                 {"id": 1, "note_id": "xyz133", "note_name": "Note 1"}
-//             ]
-//         }
-//     ]
-// }
 
 // {"folders":[{"id":1,"name":"test 1"},{"id":3,"name":"test 3"},{"id":2,"name":"test 2"},{"id":0,"name":"test 0"},{"name":"test 4"},{"id":5,"name":"test 5"}]}
