@@ -10,8 +10,9 @@ exports.hashFunc = (pw, salt) => {
             } else 
             {
                 console.log('hash ran here',hash)
-                return resolve(hash)
+                resolve(hash)
             }
         })
-    }).then(res => res).catch(err => err)
+    })
+    
 }

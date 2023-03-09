@@ -7,6 +7,8 @@ const port = process.env.PORT || 3000
 
 const deleteNotesRouter = require('./notes/delete/deleteNotes')
 const putNotesRouter = require('./notes/put/putNotes')
+const getNotesRouter = require('./notes/get/getNotes')
+const postNotesRouter = require('./notes/post/postNotes')
 const authRouter = require('./auth/auth')
 
 const app = express()
@@ -22,7 +24,7 @@ app.use(morgan('combined', {stream:requestLogFile}))
 
 app.get('/folders', async (req,res) => {
 	try {
-		const dataString = getData(fileTypes.folders)
+		const dataString = await getData(fileTypes.folders)
 		const dataJson = JSON.parse(dataString)
 		const filteredData = dataJson.folders.filter(folder => folder.inactive !== true)
 		logger.info({path: req.path})
@@ -36,7 +38,7 @@ app.get('/folders', async (req,res) => {
 // app.post('/users')
 
 app.get('/tabs/:userId', async (req, res) => {
-	const dataString = await getData(fileTypes.users)
+	const dataString = await getData(fileTypes.USERS)
 	const dataJson = JSON.parse(dataString)
 	const userObject = dataJson.users.filter(user => user.id === req.params.userId)[0]
 	res.send(userObject.tabs)
@@ -122,11 +124,15 @@ app.delete('/tabs/:noteId/:sessionId', async (req,res) =>{
 
 app.use('/notes', deleteNotesRouter)
 app.use('/notes', putNotesRouter)
+app.use('/notes', getNotesRouter)
+app.use('/notes', postNotesRouter)
 app.use('/auth', authRouter)
 app.get('/*', (req,res) =>{
 	console.log(req.path)
 })
-
-app.listen(port, () => console.log('listening on port ', port))
+if(process.env.NODE_ENV !== 'test'){
+	app.listen(port, () => console.log('listening on port ', port))
+}
 
 // {"folders":[{"id":1,"name":"test 1"},{"id":3,"name":"test 3"},{"id":2,"name":"test 2"},{"id":0,"name":"test 0"},{"name":"test 4"},{"id":5,"name":"test 5"}]}
+module.exports = app

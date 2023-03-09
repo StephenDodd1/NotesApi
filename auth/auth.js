@@ -6,13 +6,21 @@ const { getData, createANewId, writeData } = require('../common/commonFunctions'
 const { fileTypes } = require('../common/constants')
 const jwt = require('jsonwebtoken')
 const { hashFunc } = require('./utilities')
+const xss = require('xss')
+
+const sanitize = (body) =>{
+    const sanitized = {}
+    Object.keys(body).forEach(key => sanitized[key] = xss(body[key]))
+    return sanitized
+}
 
 router.post('/signup', async (req, res)=>{
     const usersString = await getData(fileTypes.USERS)
     const usersObj = JSON.parse(usersString)
     const id = createANewId()
     const userObj = {id: id}
-    
+    const sanitized = sanitize(req.body)
+    console.log('sanitized: ',sanitized)
     const body = req.body
     for(let key in body){
         if(key!=='pw'){

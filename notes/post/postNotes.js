@@ -3,20 +3,6 @@ const router = express.Router()
 const { getData, writeData, createANewId } = require('../../common/commonFunctions')
 const { fileTypes } = require('../../common/constants')
 
-const getData = (txtName) => fs.promises.readFile(`./my${txtName}.txt`, 'utf-8', (err, data) => {
-	if(!err){
-		return data
-	} else console.log(err)
-})
-const writeData = (newDataString, txtName) => {
-	console.log('txtName: ', txtName)
-	return fs.promises.writeFile(`./my${txtName}.txt`, newDataString, (err) => {
-		if(err){
-			throw new Error(err)
-		}
-	})
-}
-
 
 // create a new note
 router.post("/", async (req,res) =>{
